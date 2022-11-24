@@ -1,10 +1,11 @@
-use std::{path::Path, collections::HashMap};
+use std::{path::Path, collections::{HashMap, btree_map::Iter}, vec};
 
 use ml_data::Node;
 
 mod ml_data;
 
-fn main() {
+fn main() 
+{
     let myiter = ml_data::read_ml_json(Path::new("resources/1663154348643_8ZGUJJLLWV/ml_data/1663154348643_8ZGUJJLLWV.json"))
     .element_statistics.nodes.into_iter().find(|node|
     {
@@ -19,8 +20,27 @@ fn main() {
     let cuiter = ml_data::read_ml_json(Path::new("resources/1663154348643_8ZGUJJLLWV/ml_data/1663154348643_8ZGUJJLLWV.json"))
     .element_statistics.nodes;
     let nodemap = mnode_to_hashm(cuiter);
-    let num = corrlacion(myiter.a, &nodemap);
-    print!("{:?}", num);
+    let vecnum = corrlacion(myiter.a, &nodemap);
+    let tup = maxi(vecnum);
+    print!("{:?} {:?}", tup.0, tup.1);
+}
+
+fn maxi(list: Vec<f64>) -> (f64,f64)
+{
+    let mut maxi = 0.0;
+    let mut num = 0.0;
+    for k in list 
+    {
+        if(k > maxi) 
+        {
+            maxi = k;
+            num = 1.0;
+        }
+        else if (k == maxi) {
+            num = num + 1.0;
+        }
+    }
+    (maxi,num)
 }
 
 fn corrlacion(nodo: HashMap<String, String>, vnodos: &Vec<HashMap<String, String>>) -> Vec<f64>
@@ -54,6 +74,7 @@ fn corrlacion(nodo: HashMap<String, String>, vnodos: &Vec<HashMap<String, String
         sum/tam
     }).collect()
 }
+
 
 
 fn mnode_to_hashm(nodes: Vec<Node>) -> Vec<HashMap<String,String>> 
