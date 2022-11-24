@@ -15,25 +15,43 @@ fn main() {
             }
         }
         return false;
-    } );
-    if let Some(datanode) = myiter  
-    {
-        print!("{:?}", datanode.a); 
-    }   
-    let cuiter = ml_data::read_ml_json(Path::new("resources/1663154348643_8ZGUJJLLWV/current/1663154348643_8ZGUJJLLWV.json"))
+    } ).unwrap();   
+    let cuiter = ml_data::read_ml_json(Path::new("resources/1663154348643_8ZGUJJLLWV/ml_data/1663154348643_8ZGUJJLLWV.json"))
     .element_statistics.nodes;
+    let nodemap = mnode_to_hashm(cuiter);
+    let num = corrlacion(myiter.a, &nodemap);
+    print!("{:?}", num);
 }
 
 fn corrlacion(nodo: HashMap<String, String>, vnodos: &Vec<HashMap<String, String>>) -> Vec<f64>
 {
+    let tam = (nodo.len() - 5) as f64;
     vnodos.iter().map(|g|
     {
         let mut sum = 0.0;
         for (k,v) in nodo.iter() 
         {
-            sum += g.iter().filter(|(gk,gv)| *gk == k && *gv == v).count() as f64;
+            let mut aux = 0;
+            if(k == "XX") {
+                aux = 1;
+            }
+            if(k == "LT"){
+                aux = 1;
+            }
+            if(k == "TP") {
+                aux = 1;
+            }
+            if(k == "WH"){
+                aux = 1;
+            }
+            if(k == "HT") {
+                aux = 1;
+            }
+            if(aux == 0) {
+                sum += g.iter().filter(|(gk,gv)| *gk == k && *gv == v).count() as f64;
+            }
         }
-        sum
+        sum/tam
     }).collect()
 }
 
